@@ -4,11 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -23,6 +25,10 @@ public class Recipe {
     private Long id;
     @NotBlank
     private String name;
+    @NotBlank
+    private String category;
+    @NonNull
+    private LocalDateTime date;
     @NotBlank
     private String description;
     @NotEmpty
