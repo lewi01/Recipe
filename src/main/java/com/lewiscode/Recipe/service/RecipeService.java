@@ -9,6 +9,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -16,6 +17,10 @@ public class RecipeService {
 
     @Autowired
     private RecipeRepository recipeRepository;
+
+    public List<Recipe> getAllRecipe(){
+        return recipeRepository.findAll();
+    }
 
     public Optional<Recipe> getRecipeById(Long recipeId){
         Optional<Recipe> recipe = recipeRepository.findById(recipeId);
@@ -46,5 +51,11 @@ public class RecipeService {
             });
         }throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"BAD_REQUEST");
 
+    }
+    public List<Recipe> searchCategory(String category){
+        return recipeRepository.findByCategoryIgnoreCaseOrderByDateDesc(category);
+    }
+    public List<Recipe> searchName(String name){
+        return recipeRepository.findByNameIgnoreCaseContainingOrderByDateDesc(name);
     }
 }

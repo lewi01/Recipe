@@ -4,11 +4,14 @@ import com.lewiscode.Recipe.entity.Recipe;
 import com.lewiscode.Recipe.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.util.List;
 import java.util.Optional;
 
 
@@ -18,7 +21,10 @@ public class RecipeController {
     @Autowired
     private RecipeService recipeService;
 
-
+    @GetMapping("/recipe")
+    public List<Recipe>allRecipe(){
+        return recipeService.getAllRecipe();
+    }
     @GetMapping( value = "/recipe/{id}")
     public Optional<Recipe> getRecipe(@PathVariable Long id){
         return recipeService.getRecipeById(id);
@@ -58,5 +64,16 @@ public class RecipeController {
             return ResponseEntity.notFound().build();
         }
 
+    }
+    @GetMapping("/recipe/search/")
+    public List<Recipe> search(@RequestParam(required = false) String category,
+                               @RequestParam(required = false) String name){
+        if (category != null){
+            return recipeService.searchCategory(category);
+        }else if (name != null){
+            return recipeService.searchName(name);
+        }else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"BAD_REQUEST");
+        }
     }
 }
