@@ -1,5 +1,6 @@
 package com.lewiscode.Recipe.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,4 +40,8 @@ public class Recipe {
     @ElementCollection
     @Size(min = 1,message = "provide at least 3 directions")
     private List<String> directions;
+    @JsonIgnore
+    @ManyToOne
+    @JoinColumn(name = "id")
+    private User user;
 }

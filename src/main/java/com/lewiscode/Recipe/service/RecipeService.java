@@ -55,6 +55,7 @@ public class RecipeService {
     public List<Recipe> searchCategory(String category){
         return recipeRepository.findByCategoryIgnoreCaseOrderByDateDesc(category);
     }
+// it searches through
     public List<Recipe> searchName(String name){
         return recipeRepository.findByNameIgnoreCaseContainingOrderByDateDesc(name);
     }
