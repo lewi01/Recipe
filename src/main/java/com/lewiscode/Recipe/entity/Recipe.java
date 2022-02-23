@@ -34,14 +34,14 @@ public class Recipe {
     private String description;
     @NotEmpty
     @ElementCollection
-    @Size(min = 1,message = "provide at least 2 directions")
+    @Size(min = 1,message = "provide at least 1 directions")
     private List<String> ingredients;
     @NotEmpty
     @ElementCollection
-    @Size(min = 1,message = "provide at least 3 directions")
+    @Size(min = 1,message = "provide at least 1 directions")
     private List<String> directions;
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "user_id")
     private User user;
 }

@@ -24,12 +24,12 @@ public class SecurityConfigurationImpl extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
+            http.csrf().disable()
+                .headers().frameOptions().disable()
+                .and()
+                .authorizeRequests()
                 .antMatchers("/api/register").permitAll()
                 .anyRequest().authenticated()
-                .and()
-                .csrf().disable()
-                .headers().frameOptions().disable()
                 .and()
                 .httpBasic();
     }
