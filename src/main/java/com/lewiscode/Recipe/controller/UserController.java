@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/register")
@@ -21,9 +20,7 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
     @PostMapping
     public ResponseEntity<User> registerUser(@Valid @RequestBody User user){
-        User user1 = userService.getUserByEmail(user.getEmail());
-
-        if (user1 != null){
+        if (userService.getUserByEmail(user.getEmail()) != null){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));

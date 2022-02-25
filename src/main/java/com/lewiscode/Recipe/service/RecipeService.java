@@ -2,6 +2,7 @@ package com.lewiscode.Recipe.service;
 
 import com.lewiscode.Recipe.entity.Recipe;
 import com.lewiscode.Recipe.repository.RecipeRepository;
+import com.lewiscode.Recipe.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,8 @@ public class RecipeService {
 
     @Autowired
     private RecipeRepository recipeRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<Recipe> getAllRecipe(){
         return recipeRepository.findAll();
@@ -30,32 +33,30 @@ public class RecipeService {
     }
 
     public Recipe addRecipe(Recipe recipe){
-        recipe.setDate(LocalDateTime.now());
-        return recipeRepository.save(recipe);
+      recipe.setDate(LocalDateTime.now());
+      return recipeRepository.save(recipe);
     }
 
     public void deleteRecipe(long recipeId){
-        recipeRepository.deleteById(recipeId);
+       recipeRepository.deleteById(recipeId);
     }
-    public Optional<Recipe> updateRecipe(Recipe newRecipe, Long id){
-        Optional<Recipe> recipeId = recipeRepository.findById(id);
-        if (recipeId.isPresent()) {
-            return recipeId.map(recipe -> {
-                recipe.setName(newRecipe.getName());
-                recipe.setCategory(newRecipe.getCategory());
-                recipe.setDate(LocalDateTime.now());
-                recipe.setDescription(newRecipe.getDescription());
-                recipe.setIngredients(newRecipe.getIngredients());
-                recipe.setDirections(newRecipe.getDirections());
-                return recipeRepository.save(recipe);
-            });
+    public void updateRecipe(Recipe newRecipe, Long id){
+        Optional<Recipe> recipe = recipeRepository.findById(id);
+        if (recipe.isPresent()) {
+                recipe.get().setName(newRecipe.getName());
+                recipe.get().setCategory(newRecipe.getCategory());
+                recipe.get().setDate(LocalDateTime.now());
+                recipe.get().setDescription(newRecipe.getDescription());
+                recipe.get().setIngredients(newRecipe.getIngredients());
+                recipe.get().setDirections(newRecipe.getDirections());
+               recipeRepository.save(recipe.get());
         }throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"BAD_REQUEST");
 
     }
     public List<Recipe> searchCategory(String category){
         return recipeRepository.findByCategoryIgnoreCaseOrderByDateDesc(category);
     }
-// it searches through
+
     public List<Recipe> searchName(String name){
         return recipeRepository.findByNameIgnoreCaseContainingOrderByDateDesc(name);
     }

@@ -42,6 +42,6 @@ public class Recipe {
     private List<String> directions;
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 }

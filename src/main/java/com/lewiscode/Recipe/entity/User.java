@@ -1,5 +1,6 @@
 package com.lewiscode.Recipe.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,7 +20,6 @@ import java.util.List;
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long id;
     @NotBlank(message = "email must not be blank")
     @Email(regexp = "[a-zA-Z0-9_]+@[a-zA-Z0-9]+\\.[a-zA-Z]+",message = "provide a valid email")
@@ -27,9 +27,6 @@ public class User {
     @NotBlank
     @Size(min = 8,message = "password should contain at least 8 characters")
     private String password;
-
-    private String role;
-
     @OneToMany(mappedBy = "user")
     private List<Recipe> recipe;
 }
