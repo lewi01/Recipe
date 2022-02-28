@@ -6,9 +6,12 @@ The recipe project allows all chefs to register first before you are allowed to 
 POST/api/register
 ![Screenshot from 2022-02-28 15-11-15](https://user-images.githubusercontent.com/68944324/155982065-6b429c8d-e483-4787-b00e-cf51a56648a5.png)
 
-Every user is allowed to post their recipe only if they are registered and recive a response according to the id of the recipe
+Every user is allowed to post their recipe only if they are registered and recive a response according to the id of the recipe.
+
 -Example
 POST /api/recipe/new
+
+
 {
    "name": "Mint Tea",
    "category": "beverage",
@@ -22,9 +25,12 @@ Response:
    "id": 1
 }
 
+
 Multiple users are allowed to veiw all the recipes stored.
 -Example 
 GET/api/recipe
+
+
 [
 {
    "name": "Fresh Mint Tea",
@@ -44,10 +50,15 @@ GET/api/recipe
 }
 ]
 
+
 Only user who post their recipes are allowed to  update & delete their recipes.
-Anonymous user will recieve a forbidden http error and a massage "only user who posted the recipe are allowed to update or dalete the recipe"
+Anonymous user will recieve a forbidden http error and a massage "only user who posted the recipe are allowed to update or dalete the recipe".
+
+
 Example
 PUT /api/recipe/1
+
+
 {
    "name": "Warming Ginger Tea",
    "category": "beverage",
@@ -57,6 +68,9 @@ PUT /api/recipe/1
 }
 Status code: 403 (Forbidden)
  MASSAGE: ONLY USER WHO DID POST THE RECIPE IS ALLOWED TO UPDATE IT
+ 
+ 
+ 
 
  DELETE /api/recipe/1
  Status code: 403 (Forbidden)
