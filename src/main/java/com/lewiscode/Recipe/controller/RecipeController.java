@@ -1,21 +1,16 @@
 package com.lewiscode.Recipe.controller;
 
+import com.lewiscode.Recipe.entity.MyUserDetails;
 import com.lewiscode.Recipe.entity.Recipe;
 import com.lewiscode.Recipe.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.net.URI;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,17 +31,12 @@ public class RecipeController {
     }
 
     @PostMapping (value = "/recipe/new")
-    public ResponseEntity<String> addRecipe(@AuthenticationPrincipal UserDetails userDetails,
+    public ResponseEntity<String> addRecipe(@AuthenticationPrincipal MyUserDetails userDetails,
                                             @RequestBody Recipe newRecipe) {
-          Recipe createdRecipe = recipeService.addRecipe(newRecipe);
+          Recipe createdRecipe = recipeService.addRecipe(newRecipe, userDetails.getUsername());
           if (createdRecipe == null){
               return ResponseEntity.notFound().build();
           }else {
-              createdRecipe.getUser().setEmail(userDetails.getUsername());
-              URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-                      .path("/{id}")
-                      .buildAndExpand(createdRecipe.getId())
-                      .toUri();
               String response = "{" +
                       "id:" + createdRecipe.getId() +
                       "}";
@@ -55,21 +45,24 @@ public class RecipeController {
 
     }
     @DeleteMapping("/recipe/{id}")
-    public ResponseEntity<Recipe> delete(@PathVariable Long id){
+    public ResponseEntity<Recipe> delete(@PathVariable Long id,
+                                         @AuthenticationPrincipal MyUserDetails userDetails){
         try {
-            recipeService.deleteRecipe(id);
-            return ResponseEntity.noContent().build();
+            if (recipeService.deleteRecipe(id, userDetails.getUsername())) {
+                return ResponseEntity.noContent().build();
+            }
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update your own recipes.");
         }catch (EmptyResultDataAccessException e){
             return ResponseEntity.notFound().build();
         }
 
     }
     @PutMapping("/recipe/{id}")
-    public ResponseEntity<Recipe> update(@RequestBody Recipe newRecipe,@PathVariable Long id){
+    public ResponseEntity<Recipe> update(@AuthenticationPrincipal MyUserDetails userDetails,
+                                         @RequestBody Recipe newRecipe,@PathVariable Long id){
         try {
-            if (recipeService.getRecipeById(id).get().getUser().getEmail()
-                    .equals(getLoggedInUser())) {
-                recipeService.updateRecipe(newRecipe, id);
+
+            if (recipeService.updateRecipe(newRecipe,id, userDetails.getUsername())) {
                 return ResponseEntity.noContent().build();
             }
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only update your own recipes.");
@@ -88,9 +81,5 @@ public class RecipeController {
         }else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"BAD_REQUEST");
         }
-    }
-    public String getLoggedInUser() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth.getPrincipal().toString();
     }
 }

@@ -20,7 +20,7 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
     @PostMapping
     public ResponseEntity<User> registerUser(@Valid @RequestBody User user){
-        if (userService.getUserByEmail(user.getEmail()) != null){
+        if (userService.getUserByEmail(user.getEmail()).isPresent()){
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }else {
             user.setPassword(passwordEncoder.encode(user.getPassword()));

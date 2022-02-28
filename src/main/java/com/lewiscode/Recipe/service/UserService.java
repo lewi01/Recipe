@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Optional;
+
 
 @Service
 public class UserService  implements UserDetailsService {
@@ -19,20 +21,21 @@ public class UserService  implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.findByEmail(username);
-        if (user == null) {
+        Optional<User> user = userRepository.findByEmail(username);
+        if (user.isEmpty()) {
             throw  new UsernameNotFoundException("Not found" + username);
         }
-        return new MyUserDetails(user);
+        return new MyUserDetails(user.get());
     }
-    public User saveUser(User user){
-        User user1 = userRepository.findByEmail(user.getEmail());
-        if (user1 != null){
+    public void saveUser(User user){
+        Optional<User> user1 = userRepository.findByEmail(user.getEmail());
+        if (user1.isPresent()){
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
-        return userRepository.save(user);
+        user.setRoles("ROLE_USER");
+        userRepository.save(user);
     }
-    public User getUserByEmail(String email){
+    public Optional<User> getUserByEmail(String email){
         return userRepository.findByEmail(email);
     }
 }

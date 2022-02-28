@@ -1,7 +1,5 @@
 package com.lewiscode.Recipe.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -27,6 +25,7 @@ public class User {
     @NotBlank
     @Size(min = 8,message = "password should contain at least 8 characters")
     private String password;
+    private String roles;
     @OneToMany(mappedBy = "user")
     private List<Recipe> recipe;
 }

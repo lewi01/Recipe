@@ -1,6 +1,7 @@
 package com.lewiscode.Recipe.service;
 
 import com.lewiscode.Recipe.entity.Recipe;
+import com.lewiscode.Recipe.entity.User;
 import com.lewiscode.Recipe.repository.RecipeRepository;
 import com.lewiscode.Recipe.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,25 +33,38 @@ public class RecipeService {
         }throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Not Found");
     }
 
-    public Recipe addRecipe(Recipe recipe){
-      recipe.setDate(LocalDateTime.now());
+    public Recipe addRecipe(Recipe recipe, String email){
+      Optional<User> user = userRepository.findByEmail(email);
+      user.ifPresent(recipe::setUser);
       return recipeRepository.save(recipe);
     }
 
-    public void deleteRecipe(long recipeId){
-       recipeRepository.deleteById(recipeId);
+    public boolean deleteRecipe(long recipeId,String email){
+        Optional<User> user = userRepository.findByEmail(email);
+        Optional<Recipe> recipe = recipeRepository.findById(recipeId);
+        if (recipe.isPresent() && user.isPresent() && user.get() == recipe.get().getUser()) {
+            recipeRepository.deleteById(recipeId);
+            return true;
+        }else {
+            return false;
+        }
     }
-    public void updateRecipe(Recipe newRecipe, Long id){
+    public boolean updateRecipe(Recipe newRecipe, Long id, String email){
         Optional<Recipe> recipe = recipeRepository.findById(id);
-        if (recipe.isPresent()) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (recipe.isPresent() && user.isPresent() && user.get() ==recipe.get().getUser()) {
                 recipe.get().setName(newRecipe.getName());
                 recipe.get().setCategory(newRecipe.getCategory());
                 recipe.get().setDate(LocalDateTime.now());
                 recipe.get().setDescription(newRecipe.getDescription());
                 recipe.get().setIngredients(newRecipe.getIngredients());
                 recipe.get().setDirections(newRecipe.getDirections());
+                recipe.get().setUser(user.get());
                recipeRepository.save(recipe.get());
-        }throw new ResponseStatusException(HttpStatus.BAD_REQUEST,"BAD_REQUEST");
+               return true;
+        }else {
+            return false;
+        }
 
     }
     public List<Recipe> searchCategory(String category){
