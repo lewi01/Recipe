@@ -4,7 +4,11 @@ menu of every meal
 The recipe project allows all chefs to register first before you are allowed to post all your fourite recipes.
 - An example of user registration through postman
 POST/api/register
+
+
 ![Screenshot from 2022-02-28 15-11-15](https://user-images.githubusercontent.com/68944324/155982065-6b429c8d-e483-4787-b00e-cf51a56648a5.png)
+
+
 
 Every user is allowed to post their recipe only if they are registered and recive a response according to the id of the recipe.
 
